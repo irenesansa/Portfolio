@@ -310,3 +310,19 @@ body.intro-playing{overflow:hidden}
 #contact.home-contact .home-contact-legal{border-top:1px solid var(--line);padding-top:16px;margin-top:auto;font-size:11px;letter-spacing:.04em}
 @media(max-width:850px){#contact.home-contact .home-contact-main{grid-template-columns:1fr;gap:35px}#contact.home-contact .home-contact-main h2{font-size:clamp(72px,15vw,140px)}}
 @media(max-width:560px){#contact.home-contact .home-contact-intro{padding-top:70px;align-items:flex-end;gap:12px}#contact.home-contact .home-contact-intro p{font-size:clamp(28px,7vw,42px)}#contact.home-contact .home-contact-arrow{width:66px;height:66px}#contact.home-contact .home-contact-main{padding:48px 0 75px}}
+
+/* Unified line-drawn arrows: same crisp shape, original positions and directions. */
+.line-arrow{display:inline-block;width:1em;height:1em;flex:none;vertical-align:-.12em;overflow:visible}
+.line-arrow-up{transform:rotate(0deg)}
+.line-arrow-up-right{transform:rotate(45deg)}
+.line-arrow-down-right{transform:rotate(135deg)}
+.line-arrow-down{transform:rotate(180deg)}
+.round-link .line-arrow{width:27px;height:27px}
+.round-link:hover{transform:none}
+.showcase-open .line-arrow{width:31px;height:31px}
+.gallery-note-end .line-arrow{width:28px;height:28px}
+.back-projects .line-arrow{width:16px;height:16px;margin-left:5px;vertical-align:-.2em}
+#contact.home-contact .contact-links a .line-arrow{width:14px;height:14px;margin-left:3px}
+.intro-skip .line-arrow{width:14px;height:14px;vertical-align:-.18em}
+.scroll-prompt{display:inline-flex;align-items:center;gap:5px}
+.scroll-prompt .line-arrow{width:15px;height:15px}
