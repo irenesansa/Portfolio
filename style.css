@@ -202,8 +202,5 @@ body.intro-playing{overflow:hidden}
 .portfolio-intro .intro-window{width:0;height:clamp(30px,5.5vw,100px);background:transparent;transition:width .7s cubic-bezier(.65,0,.2,1),margin .7s cubic-bezier(.65,0,.2,1);margin:0}
 .portfolio-intro.is-open .intro-window{width:clamp(55px,12vw,225px);margin:0 .16em}
 .portfolio-intro .intro-window img{z-index:1}
-.portfolio-intro .intro-color{position:absolute;inset:0;background:#FFF8B8;z-index:2;opacity:0;transition:opacity .25s ease;pointer-events:none}
-.portfolio-intro.is-yellow .intro-color{opacity:1}
-.portfolio-intro.is-yellow .intro-window img{opacity:0!important}
 .portfolio-intro .intro-window.is-fullscreen{transition:none;margin:0}
 @media(max-width:700px){.portfolio-intro.is-open .intro-window{width:14vw;margin:0 .09em}}
