@@ -291,3 +291,22 @@ body.intro-playing{overflow:hidden}
 .modal-toolbar .modal-close:hover{opacity:.65;transform:scale(.94)}
 .modal-toolbar .modal-close .close-cross{display:block;width:30px;height:30px}
 .modal-toolbar .modal-close:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+
+/* Home contact / footer layout only; all project detail views remain untouched. */
+#contact.home-contact{padding-top:30px;padding-bottom:16px;min-height:94svh;display:flex;flex-direction:column;background-color:var(--bg);background-image:linear-gradient(rgba(20,20,20,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(20,20,20,.035) 1px,transparent 1px);background-size:10px 10px}
+#contact.home-contact .home-contact-index{font-size:12px;letter-spacing:.08em;color:var(--muted);margin-bottom:auto}
+#contact.home-contact .home-contact-intro{display:flex;align-items:center;justify-content:space-between;gap:28px;padding-top:95px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+#contact.home-contact .home-contact-intro p{font-size:clamp(30px,4.15vw,72px);line-height:1.06;letter-spacing:-.065em;font-weight:500;max-width:1100px;margin:0}
+#contact.home-contact .home-contact-arrow{width:clamp(82px,9.5vw,155px);height:clamp(82px,9.5vw,155px);border:1px solid var(--ink);border-radius:50%;background:#fff8b8;color:var(--ink);display:grid;place-items:center;flex-shrink:0;transition:transform .25s}
+#contact.home-contact .home-contact-arrow:hover{transform:translateY(-5px)}
+#contact.home-contact .home-contact-arrow svg{height:55%;width:55%}
+#contact.home-contact .home-contact-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.65fr);gap:clamp(20px,4vw,72px);align-items:end;padding:clamp(54px,6vw,105px) 0}
+#contact.home-contact .home-contact-main h2{font-size:clamp(78px,12.2vw,220px);font-weight:500;line-height:.88;letter-spacing:-.075em;margin:0}
+#contact.home-contact .home-contact-details{padding-bottom:10px;min-width:0}
+#contact.home-contact .mail-link{display:inline-block;font-size:clamp(18px,1.7vw,30px);font-weight:500;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:5px}
+#contact.home-contact .contact-links{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(10px,1.5vw,24px);margin-top:25px;font-size:13px}
+#contact.home-contact .contact-links button{border:1px solid var(--ink);border-radius:999px;background:transparent;padding:8px 16px;font-size:12px;cursor:pointer}
+#contact.home-contact .home-contact-legal{border-top:1px solid var(--line);padding-top:16px;margin-top:auto;font-size:11px;letter-spacing:.04em}
+@media(max-width:850px){#contact.home-contact .home-contact-main{grid-template-columns:1fr;gap:35px}#contact.home-contact .home-contact-main h2{font-size:clamp(72px,15vw,140px)}}
+@media(max-width:560px){#contact.home-contact .home-contact-intro{padding-top:70px;align-items:flex-end;gap:12px}#contact.home-contact .home-contact-intro p{font-size:clamp(28px,7vw,42px)}#contact.home-contact .home-contact-arrow{width:66px;height:66px}#contact.home-contact .home-contact-main{padding:48px 0 75px}}
