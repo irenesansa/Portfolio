@@ -136,49 +136,38 @@
     window.addEventListener('blur', () => cursor.classList.remove('active'));
   }
 
-  // Scroll-driven pinned showcase: one fixed viewport, changing image and title.
+  // Fullscreen pinned image wipe: scroll reveals each new project from the bottom.
   const scrollShowcase = document.querySelector('#works .scroll-showcase');
   const scrollSlides = Array.from(document.querySelectorAll('#works .scroll-slide'));
   const scrollProgress = document.querySelector('#works .showcase-progress');
-  if (scrollShowcase && scrollSlides.length && scrollProgress) {
-    let scheduled = false;
-    let activeSlide = -1;
-    const updateShowcase = () => {
-      scheduled = false;
+  if (scrollShowcase && scrollSlides.length) {
+    let ticking = false;
+    const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+    const render = () => {
+      ticking = false;
       const rect = scrollShowcase.getBoundingClientRect();
       const travel = Math.max(1, scrollShowcase.offsetHeight - window.innerHeight);
-      const position = Math.min(1, Math.max(0, -rect.top / travel));
-      const positionInSlides = position * (scrollSlides.length - 1);
-      const nearest = Math.min(scrollSlides.length - 1, Math.floor(positionInSlides + 0.5));
-      // Crossfade occupies a short interval around each project boundary.
+      const progress = clamp(-rect.top / travel, 0, 1) * (scrollSlides.length - 1);
+      const current = Math.min(scrollSlides.length - 1, Math.floor(progress + 0.5));
       scrollSlides.forEach((slide, i) => {
-        const proximity = Math.abs(positionInSlides - i);
-        const alpha = Math.min(1, Math.max(0, (0.7 - proximity) / 0.4));
-        const visible = reducedMotion.matches ? i === nearest : alpha > 0.001;
-        const opacity = reducedMotion.matches ? (i === nearest ? 1 : 0) : alpha;
-        slide.style.opacity = String(opacity);
+        // Previous image stays put; incoming image is uncovered vertically.
+        const reveal = i === 0 ? 1 : clamp(progress - (i - 1), 0, 1);
+        const shown = reducedMotion.matches ? (i <= current ? 1 : 0) : reveal;
+        slide.style.clipPath = 'inset(' + ((1 - shown) * 100).toFixed(3) + '% 0 0 0)';
         slide.style.zIndex = String(i + 1);
-        slide.style.pointerEvents = i === nearest ? 'auto' : 'none';
-        slide.style.visibility = visible ? 'visible' : 'hidden';
-        slide.classList.toggle('is-active', i === nearest);
-        slide.tabIndex = i === nearest ? 0 : -1;
-        slide.setAttribute('aria-hidden', String(i !== nearest));
-        const image = slide.querySelector('img');
-        const overlay = slide.querySelector('.showcase-overlay');
-        if (image) image.style.transform = reducedMotion.matches ? 'none' : 'scale(' + (1.06 - Math.max(0, 1 - proximity) * .06) + ')';
-        if (overlay) overlay.style.transform = reducedMotion.matches ? 'none' : 'translateY(' + Math.min(18, proximity * 18) + 'px)';
+        slide.style.opacity = '1';
+        slide.style.visibility = 'visible';
+        slide.style.pointerEvents = i === current ? 'auto' : 'none';
+        slide.tabIndex = i === current ? 0 : -1;
+        slide.setAttribute('aria-hidden', String(i !== current));
+        slide.classList.toggle('is-active', i === current);
       });
-      if (nearest !== activeSlide) {
-        activeSlide = nearest;
-        scrollProgress.textContent = String(nearest + 1).padStart(2, '0') + ' — ' + String(scrollSlides.length).padStart(2, '0');
-      }
+      if (scrollProgress) scrollProgress.textContent = String(current + 1).padStart(2, '0') + ' — ' + String(scrollSlides.length).padStart(2, '0');
     };
-    const requestShowcase = () => {
-      if (!scheduled) { scheduled = true; requestAnimationFrame(updateShowcase); }
-    };
-    window.addEventListener('scroll', requestShowcase, {passive: true});
-    window.addEventListener('resize', requestShowcase, {passive: true});
-    reducedMotion.addEventListener('change', requestShowcase);
-    requestShowcase();
+    const schedule = () => { if (!ticking) { ticking = true; requestAnimationFrame(render); } };
+    window.addEventListener('scroll', schedule, {passive:true});
+    window.addEventListener('resize', schedule, {passive:true});
+    reducedMotion.addEventListener('change', schedule);
+    schedule();
   }
 })();
