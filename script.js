@@ -48,66 +48,10 @@
   const pageDescription = document.querySelector('meta[name="description"]');
   const spanishDescription = pageDescription.content;
   let language = 'es';
-  // Rebuild line masks after translation and responsive line wrapping.
-  const aboutParagraphs = Array.from(document.querySelectorAll('#about .about-copy > p'));
-  let aboutRevealed = false;
-  const rebuildAboutLines = () => {
-    if (!aboutParagraphs.length) return;
-    aboutParagraphs.forEach((paragraph, paragraphIndex) => {
-      const sentence = paragraph.textContent.trim();
-      if (!sentence) return;
-      paragraph.classList.remove('about-mask-ready');
-      paragraph.textContent = '';
-      // Measure natural word wraps with the actual live paragraph width and font.
-      const words = sentence.split(/\s+/);
-      const probes = words.map((word, i) => {
-        const node = document.createElement('span');
-        node.className = 'about-measure-word';
-        node.textContent = word + (i < words.length - 1 ? ' ' : '');
-        paragraph.appendChild(node);
-        return node;
-      });
-      const groups = [];
-      probes.forEach(node => {
-        const y = Math.round(node.offsetTop);
-        const latest = groups[groups.length - 1];
-        if (!latest || Math.abs(latest.y - y) > 3) groups.push({ y, words: [node.textContent] });
-        else latest.words.push(node.textContent);
-      });
-      const lines = groups.map(group => group.words.join('').trim());
-      paragraph.replaceChildren();
-      lines.forEach((line, lineIndex) => {
-        const mask = document.createElement('span');
-        mask.className = 'about-line-mask';
-        const content = document.createElement('span');
-        content.className = 'about-line-content';
-        content.textContent = line;
-        content.style.setProperty('--line-delay', (paragraphIndex * .24 + lineIndex * .105).toFixed(3) + 's');
-        mask.appendChild(content);
-        paragraph.appendChild(mask);
-      });
-      paragraph.setAttribute('aria-label', sentence);
-      paragraph.classList.add('about-mask-ready');
-    });
-    if (aboutRevealed) document.querySelector('#about .about-grid')?.classList.add('about-animated-in');
-    window.dispatchEvent(new Event('scroll'));
-  };
-  let aboutResizeTick;
-  window.addEventListener('resize', () => {
-    clearTimeout(aboutResizeTick);
-    aboutResizeTick = setTimeout(rebuildAboutLines, 180);
-  }, { passive: true });
   const setLanguage = (next, updateURL = true) => {
     language = next === 'en' ? 'en' : 'es';
     document.documentElement.lang = language;
     translations.forEach(item => { item.el.textContent = item[language]; });
-    rebuildAboutLines();
-    if (wordRevealStarted) {
-      clearInterval(aboutTimer);
-      wordRevealStarted = false;
-      wordRevealFinished = false;
-      window.setTimeout(playAboutWords, 0);
-    }
     accessibleLabels.forEach(item => { item.el.setAttribute('aria-label', item[language]); });
     document.querySelectorAll('[data-language]').forEach(el => { el.hidden = el.dataset.language !== language; });
     languageButtons.forEach(button => {
@@ -134,57 +78,7 @@
   languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(language === 'es' ? 'en' : 'es')));
   setLanguage(initialLanguage, false);
 
-  // Word-by-word reveal: leisurely timed sequence starts when the main text is actually visible.
-  const aboutGrid = document.querySelector('#about .about-grid');
-  const aboutLead = document.querySelector('#about .about-lead');
-  let aboutTimer = null;
-  let wordRevealStarted = false;
-  let wordRevealFinished = false;
-  const playAboutWords = () => {
-    if (wordRevealStarted || reducedMotion.matches) return;
-    wordRevealStarted = true;
-    aboutGrid?.classList.add('about-motion-enabled');
-    // Every word appears individually. 165 ms spacing creates an editorial, unhurried rhythm.
-    const words = [...document.querySelectorAll('#about .about-line-content')].flatMap(line => {
-      const text = line.textContent.trim();
-      line.replaceChildren();
-      return text.split(/\s+/).map((word, i, all) => {
-        const span = document.createElement('span');
-        span.className = 'about-word';
-        span.textContent = word + (i < all.length - 1 ? ' ' : '');
-        line.appendChild(span);
-        return span;
-      });
-    });
-    const photo = aboutGrid?.querySelector('.about-photo img');
-    if (photo) photo.classList.add('about-photo-pending');
-    let current = 0;
-    const advance = () => {
-      if (current >= words.length) {
-        clearInterval(aboutTimer);
-        wordRevealFinished = true;
-        photo?.classList.add('about-photo-visible');
-        return;
-      }
-      words[current].classList.add('about-word-visible');
-      if (current === Math.floor(words.length * .52)) photo?.classList.add('about-photo-visible');
-      current++;
-    };
-    advance();
-    aboutTimer = window.setInterval(advance, 165);
-  };
-  if (aboutGrid && aboutLead && !reducedMotion.matches && 'IntersectionObserver' in window) {
-    // Do not start when the heading enters: wait until the actual introduction is clearly visible.
-    const observer = new IntersectionObserver(entries => {
-      if (entries[0]?.isIntersecting) { observer.disconnect(); playAboutWords(); }
-    }, { threshold: .55, rootMargin: '0px 0px -12% 0px' });
-    observer.observe(aboutLead);
-  } else {
-    aboutRevealed = true;
-    aboutGrid?.classList.add('about-animated-in');
-  }
-
-    // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
+  // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
   // Without dialog support or JavaScript the project articles remain readable on the page.
   const modal = document.querySelector('#projectModal');
   const archive = document.querySelector('#projectArchive');
