@@ -139,15 +139,22 @@
     routeProject();
   }
 
-  const copy = document.querySelector('#copyEmail');
-  copy.hidden = false;
-  copy.addEventListener('click', async () => {
-    const status = document.querySelector('#copyStatus');
-    try {
-      await navigator.clipboard.writeText('irenesansa2005@gmail.com');
-      status.textContent = language === 'es' ? '¡Email copiado!' : 'Email copied!';
-    } catch {
-      status.textContent = language === 'es' ? 'Selecciona el email para copiarlo, o púlsalo para escribirme.' : 'Select the email to copy it, or click it to write to me.';
+  // Reusable email copy buttons in the main footer and every project detail.
+  document.addEventListener('click', async event => {
+    const copyButton = event.target.closest('.footer-copy');
+    if (copyButton) {
+      const status = copyButton.closest('.portfolio-footer')?.querySelector('.footer-copy-status');
+      if (!status) return;
+      try {
+        await navigator.clipboard.writeText('irenesansa2005@gmail.com');
+        status.textContent = language === 'es' ? '¡Email copiado!' : 'Email copied!';
+      } catch {
+        status.textContent = language === 'es' ? 'Puedes pulsar el email para escribirme.' : 'Click the email to write to me.';
+      }
+    }
+    if (event.target.closest('[data-project-top]')) {
+      const dialog = document.getElementById('projectModal');
+      if (dialog?.open) dialog.scrollTo({top:0,behavior:reducedMotion.matches?'instant':'smooth'});
     }
   });
 
