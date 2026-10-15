@@ -33,7 +33,7 @@ El estilo parte del ZIP de referencia: fondo crema, negro, nombre grande, compos
 
 ## Publicación y SEO
 
-Publica el contenido de esta carpeta completo. Cambia el dominio `https://irene-sanchez-portfolio.amusedsnail.chatgpt.site` por tu dominio definitivo en `index.html`, `robots.txt` y `sitemap.xml` antes de alojarlo en otra dirección. Para servir desde una subcarpeta, incluye también esa ruta en las URLs absolutas.
+Publica el contenido de esta carpeta completo. Cambia el dominio `https://irenesansa.github.io/Portfolio` por tu dominio definitivo en `index.html`, `robots.txt` y `sitemap.xml` antes de alojarlo en otra dirección. Para servir desde una subcarpeta, incluye también esa ruta en las URLs absolutas.
 
 El HTML contiene títulos semánticos, descripción, datos estructurados, textos alternativos e información para compartir en redes. El sitemap apunta a una única página. El contenido original en español está en el HTML y puede leerse sin JavaScript. El inglés es un cambio interactivo dentro de la misma página: no se presenta como una segunda página estática independiente para SEO. No se incluyen etiquetas hreflang que prometan páginas inexistentes.
 
