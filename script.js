@@ -148,7 +148,7 @@
     const words = [...document.querySelectorAll('#about .about-line-content')].flatMap(line => {
       const text = line.textContent.trim();
       line.replaceChildren();
-      return text.split(/\\s+/).map((word, i, all) => {
+      return text.split(/\s+/).map((word, i, all) => {
         const span = document.createElement('span');
         span.className = 'about-word';
         span.textContent = word + (i < all.length - 1 ? ' ' : '');
