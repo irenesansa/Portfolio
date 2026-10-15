@@ -204,3 +204,30 @@ body.intro-playing{overflow:hidden}
 .portfolio-intro .intro-window img{z-index:1}
 .portfolio-intro .intro-window.is-fullscreen{transition:none;margin:0}
 @media(max-width:700px){.portfolio-intro.is-open .intro-window{width:14vw;margin:0 .09em}}
+
+
+/* Project detail pages: full-bleed editorial opening + compact image mosaics. */
+#modalContent .project-detail{padding:0;border:0}
+#modalContent .project-opening{position:relative;width:100%;height:calc(100svh - 65px);min-height:480px;background:#242424;overflow:hidden;isolation:isolate}
+#modalContent .project-cover{position:absolute;inset:0;margin:0;width:100%;height:100%;max-height:none}
+#modalContent .project-cover img{display:block;width:100%;height:100%;max-height:none;object-fit:cover}
+#modalContent .project-opening:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.3),transparent 38%,rgba(0,0,0,.58));pointer-events:none}
+#modalContent .project-hero{position:absolute;inset:0;z-index:1;padding:clamp(28px,4vw,65px);display:flex;flex-direction:column;justify-content:space-between;color:#fff;pointer-events:none}
+#modalContent .project-kicker{border:0;color:#fff;opacity:.9}
+#modalContent .project-hero h2{margin:auto 0 0;font-size:clamp(65px,12vw,200px);line-height:.94;letter-spacing:-.065em;overflow-wrap:anywhere}
+#modalContent .project-subtitle{color:#fff;margin:14px 0 0;font-size:clamp(13px,1.4vw,19px)}
+#modalContent .project-info{padding:clamp(36px,5vw,85px) var(--pad) clamp(34px,5vw,70px);display:grid;grid-template-columns:minmax(200px,.7fr) minmax(0,1.3fr);gap:clamp(24px,5vw,90px)}
+#modalContent .project-role{font-weight:500;letter-spacing:.045em;margin:0}
+#modalContent .project-description{font-size:clamp(18px,2.2vw,31px);line-height:1.36}
+#modalContent .project-gallery{display:block;padding:0 var(--pad);columns:2;column-gap:12px}
+#modalContent .project-gallery figure{display:block;break-inside:avoid;page-break-inside:avoid;overflow:hidden;margin:0 0 12px;grid-column:auto;background:transparent}
+#modalContent .project-gallery img{display:block;width:100%;height:auto;min-height:0;max-height:none;object-fit:contain}
+#modalContent .back-projects{margin:32px var(--pad) 65px}
+@media(max-width:700px){
+ #modalContent .project-opening{height:calc(100svh - 65px);min-height:420px}
+ #modalContent .project-hero{padding:24px}
+ #modalContent .project-hero h2{font-size:clamp(48px,13vw,115px)}
+ #modalContent .project-info{grid-template-columns:1fr;padding:30px var(--pad);gap:16px}
+ #modalContent .project-gallery{columns:1;column-gap:0}
+ #modalContent .project-gallery figure{margin-bottom:10px}
+}
