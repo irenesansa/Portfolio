@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://irene-sanchez-portfolio.amusedsnail.chatgpt.site/sitemap.xml
