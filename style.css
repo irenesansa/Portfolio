@@ -145,3 +145,18 @@ body.modal-open{overflow:hidden}
   #works.scroll-works .showcase-heading h3{font-size:clamp(54px,13vw,112px)}
 }
 @media(prefers-reduced-motion:reduce){#works.scroll-works .scroll-slide{animation:none!important}}
+
+
+/* Correct pinned gallery: one fixed viewport, all slides share the same coordinates. */
+#works.scroll-works .scroll-showcase{height:400svh;position:relative}
+#works.scroll-works .showcase-sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#111}
+#works.scroll-works .showcase-sticky .showcase-stage{position:absolute;inset:0;width:100%;height:100%;min-height:0;overflow:hidden;background:#111}
+#works.scroll-works .showcase-sticky .scroll-slide{position:absolute;inset:0;top:0;width:100%;height:100%;min-height:0;display:block;opacity:0;visibility:visible;pointer-events:none;transform:none;animation:none!important;transition:none;z-index:1}
+#works.scroll-works .showcase-sticky .scroll-slide.is-active{pointer-events:auto;z-index:2}
+#works.scroll-works .showcase-sticky .scroll-slide img{height:100%;object-fit:cover;transform:scale(1.06);will-change:transform}
+#works.scroll-works .showcase-sticky .scroll-slide .showcase-overlay{transform:translateY(18px);will-change:transform}
+#works.scroll-works .scroll-showcase-end{position:absolute;bottom:0;left:0;right:0;z-index:6;background:transparent;color:white;pointer-events:none;padding:16px var(--pad);text-shadow:0 1px 6px rgba(0,0,0,.5)}
+#works.scroll-works .showcase-overlay{padding-bottom:72px}
+#works.scroll-works .showcase-open{top:clamp(90px,10vw,130px)}
+@media(max-width:800px){#works.scroll-works .showcase-sticky{height:100svh}#works.scroll-works .showcase-sticky .scroll-slide{height:100%}#works.scroll-works .showcase-heading h3{font-size:clamp(50px,12vw,105px)}}
+@media(prefers-reduced-motion:reduce){#works.scroll-works .showcase-sticky .scroll-slide img{transform:none!important}#works.scroll-works .showcase-sticky .scroll-slide .showcase-overlay{transform:none!important}}
