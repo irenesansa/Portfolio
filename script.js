@@ -33,20 +33,10 @@
         frames.forEach(item => item.classList.remove('is-current'));
         frame.classList.add('is-current');
       }, 1680 + i * 420));
-      // Sustituir la última fotografía por un bloque sólido antes de expandir.
-      later(() => intro.classList.add('is-yellow'), 3140);
-      later(() => {
-        const rect = windowEl.getBoundingClientRect();
-        windowEl.style.setProperty('--intro-left', rect.left + 'px');
-        windowEl.style.setProperty('--intro-top', rect.top + 'px');
-        windowEl.style.setProperty('--intro-width', rect.width + 'px');
-        windowEl.style.setProperty('--intro-height', rect.height + 'px');
-        intro.classList.add('is-expanding');
-        windowEl.classList.add('is-fullscreen');
-      }, 3490);
-      later(() => intro.classList.add('is-wiping'), 4810);
-      later(finish, 5800);
-      later(finish, 6700);
+      // La última fotografía permanece en el marco; barrido directo a la portada.
+      later(() => intro.classList.add('is-wiping'), 3230);
+      later(finish, 4200);
+      later(finish, 5600);
     } else {
       intro?.remove();
     }
