@@ -389,3 +389,11 @@ body.intro-playing{overflow:hidden}
 #about .about-grid.about-motion-enabled.about-animated-in .about-line-content{opacity:1;transform:translate3d(0,0,0);transition:transform 1.05s cubic-bezier(.22,1,.36,1),opacity .8s ease;transition-delay:var(--line-delay,0s)}
 #about .about-grid.about-motion-enabled.about-animated-in .about-photo img{opacity:1;transform:translate3d(0,0,0);transition:opacity 1s ease .18s,transform 1.15s cubic-bezier(.22,1,.36,1) .18s}
 @media(prefers-reduced-motion:reduce){#about .about-copy .about-line-content,#about .about-photo img{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* Slower About typography: word-by-word rather than whole-line masks. */
+#about .about-grid.about-motion-enabled .about-line-content{opacity:1!important;transform:none!important;transition:none!important}
+#about .about-word{display:inline;opacity:0;filter:blur(3px);transition:opacity .55s ease,filter .65s ease}
+#about .about-word.about-word-visible{opacity:1;filter:blur(0)}
+#about .about-photo-pending{opacity:0!important;transform:translateY(24px)!important}
+#about .about-photo-pending.about-photo-visible{opacity:1!important;transform:translateY(0)!important;transition:opacity 1.2s ease,transform 1.2s ease!important}
+@media(prefers-reduced-motion:reduce){#about .about-word{opacity:1;filter:none;transition:none}}
