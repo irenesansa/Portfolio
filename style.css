@@ -178,20 +178,21 @@ body.modal-open{overflow:hidden}
 
 
 
-/* Intro motion: framed project recap expands to fullscreen, then wipes into hero. */
-.portfolio-intro{display:none;position:fixed;inset:0;z-index:300;overflow:hidden;background:#f3f0e8;color:#111}
+/* Editorial portfolio intro: project-image window grows from the wordmark into a fullscreen wipe. */
+.portfolio-intro{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:#f3f0e8;color:#111;overflow:hidden;clip-path:inset(0 0 0 0)}
 body.intro-playing{overflow:hidden}
-body.intro-playing .portfolio-intro{display:grid;place-items:center}
-.intro-wordmark{font-size:clamp(24px,5.4vw,88px);font-weight:500;letter-spacing:-.075em;line-height:1;display:flex;align-items:center;justify-content:center;gap:.14em;white-space:nowrap;position:relative}
-.intro-window{position:relative;width:clamp(56px,13vw,230px);height:clamp(25px,5.3vw,92px);overflow:hidden;display:block;flex:none;background:#222;transform-origin:center}
-.intro-window img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s linear}
+.intro-wordmark{position:relative;display:flex;justify-content:center;align-items:center;gap:.16em;font-size:clamp(20px,5.5vw,90px);font-weight:500;letter-spacing:-.065em;line-height:1;white-space:nowrap;animation:intro-appear .6s ease both}
+.intro-wordmark>span:not(.intro-window){transition:opacity .38s ease,transform .6s ease}
+.intro-window{display:block;flex:none;position:relative;width:clamp(55px,12vw,225px);height:clamp(30px,5.5vw,100px);overflow:hidden;background:#292929;isolation:isolate}
+.intro-window img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .24s ease}
 .intro-window img.is-current{opacity:1}
-.intro-skip{position:absolute;bottom:24px;right:var(--pad);border:1px solid currentColor;border-radius:999px;padding:10px 16px;background:transparent;z-index:5;font-size:12px}
-.portfolio-intro.is-expanding .intro-window{animation:intro-expand 1.15s cubic-bezier(.76,0,.15,1) forwards;z-index:3}
-.portfolio-intro.is-expanding .intro-wordmark>span:not(.intro-window){animation:intro-text-fade .35s ease forwards}
-@keyframes intro-expand{to{width:130vw;height:130vh}}
-@keyframes intro-text-fade{to{opacity:0}}
-.portfolio-intro.is-wiping{animation:intro-wipe .85s cubic-bezier(.7,0,.2,1) forwards}
-@keyframes intro-wipe{to{clip-path:inset(0 0 100% 0)}}
-@media(max-width:700px){.intro-wordmark{font-size:clamp(22px,5vw,48px)}.intro-window{width:13vw;height:7vw}.intro-skip{bottom:20px}}
+.intro-skip{position:absolute;bottom:24px;right:var(--pad);border:1px solid #111;border-radius:999px;padding:10px 16px;background:rgba(243,240,232,.88);font-size:12px;z-index:310;cursor:pointer}
+.portfolio-intro.is-expanding .intro-wordmark>span:not(.intro-window){opacity:0;transform:translateY(-12px)}
+.portfolio-intro.is-expanding .intro-wordmark{animation:none}
+.portfolio-intro .intro-window.is-fullscreen{position:fixed;z-index:305;left:var(--intro-left);top:var(--intro-top);width:var(--intro-width);height:var(--intro-height);animation:intro-window-grow 1.25s cubic-bezier(.77,0,.17,1) forwards}
+@keyframes intro-appear{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes intro-window-grow{to{left:0;top:0;width:100vw;height:100dvh}}
+.portfolio-intro.is-wiping{animation:intro-page-wipe .85s cubic-bezier(.72,0,.2,1) forwards}
+@keyframes intro-page-wipe{to{clip-path:inset(0 0 100% 0)}}
+@media(max-width:700px){.intro-wordmark{font-size:clamp(17px,5vw,40px);gap:.09em}.intro-window{width:14vw;height:7vw}.intro-skip{bottom:18px}}
 @media(prefers-reduced-motion:reduce){.portfolio-intro{display:none!important}}
