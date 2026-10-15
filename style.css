@@ -120,3 +120,28 @@ body.modal-open{overflow:hidden}
 .showcase-buttons button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 @media(max-width:800px){.showcase-stage{height:62svh;min-height:420px}.showcase-heading{display:block}.showcase-heading h3{font-size:clamp(52px,12vw,100px)}.showcase-heading span{display:block;text-align:left;margin-top:14px}.showcase-controls button{width:44px;height:44px}}
 @media(prefers-reduced-motion:reduce){.showcase-slide,.showcase-slide img{transition:none;transform:none!important}}
+
+
+/* Fullscreen scroll-driven project showcase. No timer, no scroll hijacking. */
+#works.scroll-works{padding:0;margin:0}
+#works.scroll-works .section-head{padding:48px var(--pad) 24px;margin:0;border-bottom:0}
+#works.scroll-works .scroll-showcase{width:100%;position:relative}
+#works.scroll-works .showcase-stage{height:auto;min-height:0;overflow:visible;background:transparent}
+#works.scroll-works .scroll-slide{position:sticky;top:0;inset:auto;display:block;width:100%;height:100svh;min-height:540px;opacity:1;visibility:visible;pointer-events:auto;z-index:var(--slide-index);isolation:isolate;transition:none;overflow:hidden}
+#works.scroll-works .scroll-slide img{height:100%;width:100%;object-fit:cover;transform:none;transition:none}
+#works.scroll-works .scroll-slide.is-active img{transform:none}
+#works.scroll-works .scroll-slide:after{background:linear-gradient(0deg,rgba(0,0,0,.68),rgba(0,0,0,.05) 55%,rgba(0,0,0,.2))}
+#works.scroll-works .showcase-overlay{padding:clamp(26px,4vw,64px)}
+#works.scroll-works .showcase-heading h3{font-size:clamp(64px,11vw,185px)}
+#works.scroll-works .scroll-showcase-end{display:flex;align-items:center;justify-content:space-between;padding:20px var(--pad);background:var(--bg);font-size:12px;letter-spacing:.1em;text-transform:uppercase;position:relative;z-index:10}
+#works.scroll-works .scroll-slide:focus-visible{outline:3px solid white;outline-offset:-8px}
+@supports (animation-timeline: view()){
+  @keyframes project-reveal {from{clip-path:inset(9% 0 0 0);transform:scale(1.04)}to{clip-path:inset(0 0 0 0);transform:scale(1)}}
+  #works.scroll-works .scroll-slide:not(:first-child){animation:project-reveal linear both;animation-timeline:view(block);animation-range:entry 0% entry 100%}
+}
+@media(max-width:800px){
+  #works.scroll-works .section-head{padding:42px var(--pad) 20px}
+  #works.scroll-works .scroll-slide{height:100svh;min-height:0}
+  #works.scroll-works .showcase-heading h3{font-size:clamp(54px,13vw,112px)}
+}
+@media(prefers-reduced-motion:reduce){#works.scroll-works .scroll-slide{animation:none!important}}
