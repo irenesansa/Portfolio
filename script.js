@@ -3,32 +3,47 @@
   'use strict';
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // Intro única de entrada: mini galería enmarcada, expansión y barrido a portada.
-  if (!reducedMotion.matches && !location.hash && !new URLSearchParams(location.search).has('skipIntro')) {
+  // Intro de portada: recap fotográfico → expansión a viewport → barrido → portada existente.
+  {
     const intro = document.getElementById('portfolioIntro');
-    const frames = Array.from(intro.querySelectorAll('.intro-window img'));
-    let finished = false;
-    document.body.classList.add('intro-playing');
-    frames[0]?.classList.add('is-current');
-    const timers = [];
-    const later = (fn, ms) => timers.push(setTimeout(fn, ms));
-    const finish = () => {
-      if (finished) return;
-      finished = true;
-      timers.forEach(clearTimeout);
-      intro.remove();
-      document.body.classList.remove('intro-playing');
-    };
-    document.getElementById('introSkip')?.addEventListener('click', finish);
-    frames.slice(1).forEach((frame, i) => later(() => {
-      frames.forEach(x => x.classList.remove('is-current'));
-      frame.classList.add('is-current');
-    }, 550 + i * 550));
-    later(() => intro.classList.add('is-expanding'), 2550);
-    later(() => intro.classList.add('is-wiping'), 3700);
-    later(finish, 4630);
-  } else {
-    document.getElementById('portfolioIntro')?.remove();
+    const deepLink = location.hash && location.hash !== '#top';
+    const skipRequested = new URLSearchParams(location.search).has('skipIntro');
+    if (intro && !reducedMotion.matches && !deepLink && !skipRequested) {
+      const frames = [...intro.querySelectorAll('.intro-window img')];
+      const windowEl = intro.querySelector('.intro-window');
+      let finished = false;
+      const timers = [];
+      const later = (callback, ms) => timers.push(window.setTimeout(callback, ms));
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        timers.forEach(clearTimeout);
+        document.body.classList.remove('intro-playing');
+        intro.remove();
+      };
+      document.body.classList.add('intro-playing');
+      frames[0]?.classList.add('is-current');
+      intro.querySelector('.intro-skip')?.addEventListener('click', finish, {once:true});
+      // Safety fallback if a browser throttles a transition or an image cannot load.
+      later(finish, 6200);
+      frames.slice(1).forEach((frame,i) => later(() => {
+        frames.forEach(item => item.classList.remove('is-current'));
+        frame.classList.add('is-current');
+      }, 750 + 480*i));
+      later(() => {
+        intro.classList.add('is-expanding');
+        const rect = windowEl.getBoundingClientRect();
+        windowEl.style.setProperty('--intro-left', rect.left + 'px');
+        windowEl.style.setProperty('--intro-top', rect.top + 'px');
+        windowEl.style.setProperty('--intro-width', rect.width + 'px');
+        windowEl.style.setProperty('--intro-height', rect.height + 'px');
+        windowEl.classList.add('is-fullscreen');
+      }, 2550);
+      later(() => intro.classList.add('is-wiping'), 3880);
+      later(finish, 4900);
+    } else {
+      intro?.remove();
+    }
   }
 
   const translations = Array.from(document.querySelectorAll('[data-en]'), el => ({ el, es: el.textContent, en: el.dataset.en }));
