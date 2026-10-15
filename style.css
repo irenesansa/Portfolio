@@ -240,3 +240,17 @@ body.intro-playing{overflow:hidden}
 #modalContent .gallery-note-copy{font-size:clamp(24px,3vw,48px);line-height:1.13;letter-spacing:-.05em;font-weight:500;max-width:620px;margin:32px 0}
 #modalContent .gallery-note-end{font-size:25px;align-self:flex-end}
 @media(max-width:700px){#modalContent .project-gallery{columns:1}#modalContent .project-gallery .gallery-note{min-height:260px;padding:25px}#modalContent .gallery-note-copy{font-size:clamp(26px,7vw,38px)}}
+
+
+/* NOGUE: deliberately balanced two-column gallery; red portrait fills bottom-left. */
+#modalContent .project-gallery.nogue-gallery{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;columns:auto;align-items:stretch}
+#modalContent .nogue-gallery-column{display:flex;flex-direction:column;gap:12px;min-width:0}
+#modalContent .nogue-gallery-column figure,
+#modalContent .nogue-gallery-column .gallery-note{margin:0;flex-shrink:0}
+#modalContent .nogue-gallery-column .nogue-red-photo{flex:1 1 auto;min-height:280px;overflow:hidden}
+#modalContent .nogue-gallery-column .nogue-red-photo img{height:100%;width:100%;object-fit:cover;object-position:center 35%}
+@media(max-width:700px){
+ #modalContent .project-gallery.nogue-gallery{grid-template-columns:1fr}
+ #modalContent .nogue-gallery-column .nogue-red-photo{flex:none;min-height:0}
+ #modalContent .nogue-gallery-column .nogue-red-photo img{height:auto;object-fit:contain}
+}
