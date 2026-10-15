@@ -326,3 +326,7 @@ body.intro-playing{overflow:hidden}
 .intro-skip .line-arrow{width:14px;height:14px;vertical-align:-.18em}
 .scroll-prompt{display:inline-flex;align-items:center;gap:5px}
 .scroll-prompt .line-arrow{width:15px;height:15px}
+
+/* CV accordions: thin square-ended plus/minus icons matching the close X. */
+.cv-details summary::after{content:"";display:block;flex:0 0 30px;width:30px;height:30px;background:linear-gradient(var(--ink),var(--ink)) center/26px 1.35px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.35px 26px no-repeat}
+.cv-details details[open] summary::after{content:"";background:linear-gradient(var(--ink),var(--ink)) center/26px 1.35px no-repeat}
