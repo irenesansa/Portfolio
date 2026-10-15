@@ -379,3 +379,13 @@ body.intro-playing{overflow:hidden}
  #about.about .about-copy .about-lead{font-size:clamp(24px,6vw,34px)}
  #about.about .about-copy>p:not(.about-lead){font-size:clamp(18px,4vw,25px);margin-top:0;text-align:left}
 }
+
+/* Scroll-triggered masked line reveal scoped exclusively to About paragraphs/photo. */
+#about .about-copy .about-measure-word{display:inline;white-space:pre}
+#about .about-copy .about-line-mask{display:block;overflow:hidden;padding-bottom:.07em;margin-bottom:-.07em}
+#about .about-copy .about-line-content{display:block}
+#about .about-grid.about-motion-enabled .about-line-content{opacity:0;transform:translate3d(0,105%,0)}
+#about .about-grid.about-motion-enabled .about-photo img{opacity:0;transform:translate3d(0,28px,0)}
+#about .about-grid.about-motion-enabled.about-animated-in .about-line-content{opacity:1;transform:translate3d(0,0,0);transition:transform 1.05s cubic-bezier(.22,1,.36,1),opacity .8s ease;transition-delay:var(--line-delay,0s)}
+#about .about-grid.about-motion-enabled.about-animated-in .about-photo img{opacity:1;transform:translate3d(0,0,0);transition:opacity 1s ease .18s,transform 1.15s cubic-bezier(.22,1,.36,1) .18s}
+@media(prefers-reduced-motion:reduce){#about .about-copy .about-line-content,#about .about-photo img{opacity:1!important;transform:none!important;transition:none!important}}
