@@ -135,4 +135,44 @@
     document.documentElement.addEventListener('pointerleave', () => cursor.classList.remove('active'));
     window.addEventListener('blur', () => cursor.classList.remove('active'));
   }
+
+  // Galería de portada: manual con flechas/teclado y avance automático discreto.
+  const showcase = document.querySelector('.project-showcase');
+  if (showcase) {
+    const slides = Array.from(showcase.querySelectorAll('.showcase-slide'));
+    const progress = showcase.querySelector('.showcase-progress');
+    let active = 0, autoTimer;
+    function showSlide(next) {
+      active = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        const selected = i === active;
+        slide.classList.toggle('is-active', selected);
+        slide.setAttribute('aria-hidden', String(!selected));
+        slide.tabIndex = selected ? 0 : -1;
+      });
+      progress.textContent = String(active + 1).padStart(2, '0') + ' — ' + String(slides.length).padStart(2, '0');
+    }
+    function restartAuto() {
+      clearInterval(autoTimer);
+      if (reducedMotion.matches || document.hidden || showcase.matches(':hover') || showcase.contains(document.activeElement)) return;
+      autoTimer = setInterval(() => showSlide(active + 1), 5500);
+    }
+    showcase.querySelector('.showcase-prev').addEventListener('click', () => { showSlide(active - 1); restartAuto(); });
+    showcase.querySelector('.showcase-next').addEventListener('click', () => { showSlide(active + 1); restartAuto(); });
+    showcase.addEventListener('mouseenter', () => clearInterval(autoTimer));
+    showcase.addEventListener('mouseleave', restartAuto);
+    showcase.addEventListener('focusin', () => clearInterval(autoTimer));
+    showcase.addEventListener('focusout', () => setTimeout(restartAuto, 0));
+    showcase.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault(); showSlide(active + (event.key === 'ArrowRight' ? 1 : -1)); restartAuto();
+      }
+    });
+    document.addEventListener('visibilitychange', restartAuto);
+    reducedMotion.addEventListener('change', restartAuto);
+    let touchX = null;
+    showcase.addEventListener('touchstart', e => { touchX = e.changedTouches[0].clientX; }, {passive:true});
+    showcase.addEventListener('touchend', e => { if(touchX===null)return;const d=e.changedTouches[0].clientX-touchX;if(Math.abs(d)>45){showSlide(active+(d<0?1:-1));restartAuto();}touchX=null; }, {passive:true});
+    showSlide(0); restartAuto();
+  }
 })();
