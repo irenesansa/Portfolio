@@ -22,25 +22,31 @@
         intro.remove();
       };
       document.body.classList.add('intro-playing');
-      frames[0]?.classList.add('is-current');
       intro.querySelector('.intro-skip')?.addEventListener('click', finish, {once:true});
-      // Safety fallback if a browser throttles a transition or an image cannot load.
-      later(finish, 6200);
-      frames.slice(1).forEach((frame,i) => later(() => {
+      // Tiempo 0-1.1 s: nombre solo, sin ventana.
+      later(() => {
+        intro.classList.add('is-open');
+        frames[0]?.classList.add('is-current');
+      }, 1100);
+      // Recap fotográfico después de abrirse el marco.
+      frames.slice(1).forEach((frame, i) => later(() => {
         frames.forEach(item => item.classList.remove('is-current'));
         frame.classList.add('is-current');
-      }, 750 + 480*i));
+      }, 1680 + i * 420));
+      // Sustituir la última fotografía por un bloque sólido antes de expandir.
+      later(() => intro.classList.add('is-yellow'), 3140);
       later(() => {
-        intro.classList.add('is-expanding');
         const rect = windowEl.getBoundingClientRect();
         windowEl.style.setProperty('--intro-left', rect.left + 'px');
         windowEl.style.setProperty('--intro-top', rect.top + 'px');
         windowEl.style.setProperty('--intro-width', rect.width + 'px');
         windowEl.style.setProperty('--intro-height', rect.height + 'px');
+        intro.classList.add('is-expanding');
         windowEl.classList.add('is-fullscreen');
-      }, 2550);
-      later(() => intro.classList.add('is-wiping'), 3880);
-      later(finish, 4900);
+      }, 3490);
+      later(() => intro.classList.add('is-wiping'), 4810);
+      later(finish, 5800);
+      later(finish, 6700);
     } else {
       intro?.remove();
     }
