@@ -170,4 +170,32 @@
     reducedMotion.addEventListener('change', schedule);
     schedule();
   }
+  // Letras interactivas: mayor anchura y grosor junto al cursor.
+  const heroLettering = document.querySelector('.hero-title.hero-animated');
+  if (heroLettering && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const letters = [...heroLettering.querySelectorAll('.hero-letter')];
+    let queued = false, pointerX = -10000, pointerY = -10000;
+    const reset = () => letters.forEach(letter => {
+      letter.style.fontWeight = '400';
+      letter.style.setProperty('--stretch', '1');
+    });
+    const renderLetters = () => {
+      queued = false;
+      const radius = Math.max(85, Math.min(170, window.innerWidth * .12));
+      letters.forEach(letter => {
+        const bounds = letter.getBoundingClientRect();
+        const cx = bounds.left + bounds.width / 2, cy = bounds.top + bounds.height / 2;
+        const distance = Math.hypot((pointerX - cx), (pointerY - cy) * 1.35);
+        const influence = Math.pow(Math.max(0, 1 - distance / radius), 1.25);
+        letter.style.fontWeight = String(Math.round((400 + influence * 450) / 50) * 50);
+        letter.style.setProperty('--stretch', (1 + influence * .24).toFixed(3));
+      });
+    };
+    heroLettering.addEventListener('pointermove', event => {
+      pointerX = event.clientX; pointerY = event.clientY;
+      if (!queued) { queued = true; requestAnimationFrame(renderLetters); }
+    }, {passive:true});
+    heroLettering.addEventListener('pointerleave', reset);
+    window.addEventListener('blur', reset);
+  }
 })();
