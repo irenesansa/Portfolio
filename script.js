@@ -144,7 +144,7 @@
     if (wordRevealStarted || reducedMotion.matches) return;
     wordRevealStarted = true;
     aboutGrid?.classList.add('about-motion-enabled');
-    // Every word appears individually. 165 ms spacing creates an editorial, unhurried rhythm.
+    // Every word appears individually. 340 ms spacing creates an editorial, unhurried rhythm.
     const words = [...document.querySelectorAll('#about .about-line-content')].flatMap(line => {
       const text = line.textContent.trim();
       line.replaceChildren();
@@ -171,7 +171,7 @@
       current++;
     };
     advance();
-    aboutTimer = window.setInterval(advance, 165);
+    aboutTimer = window.setInterval(advance, 340);
   };
   if (aboutGrid && aboutLead && !reducedMotion.matches && 'IntersectionObserver' in window) {
     // Do not start when the heading enters: wait until the actual introduction is clearly visible.
