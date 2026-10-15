@@ -160,3 +160,18 @@ body.modal-open{overflow:hidden}
 #works.scroll-works .showcase-open{top:clamp(90px,10vw,130px)}
 @media(max-width:800px){#works.scroll-works .showcase-sticky{height:100svh}#works.scroll-works .showcase-sticky .scroll-slide{height:100%}#works.scroll-works .showcase-heading h3{font-size:clamp(50px,12vw,105px)}}
 @media(prefers-reduced-motion:reduce){#works.scroll-works .showcase-sticky .scroll-slide img{transform:none!important}#works.scroll-works .showcase-sticky .scroll-slide .showcase-overlay{transform:none!important}}
+
+
+/* Reference-style vertical image wipe with truly centered titles. */
+#works.scroll-works .showcase-sticky .scroll-slide{opacity:1!important;visibility:visible!important;clip-path:inset(100% 0 0 0);transition:none!important;will-change:clip-path}
+#works.scroll-works .showcase-sticky .scroll-slide:first-child{clip-path:inset(0 0 0 0)}
+#works.scroll-works .showcase-sticky .scroll-slide img{transform:none!important;will-change:auto}
+#works.scroll-works .showcase-overlay{display:block;padding:0;inset:0;transform:none!important}
+#works.scroll-works .showcase-heading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:94%;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:18px}
+#works.scroll-works .showcase-heading h3{font-size:clamp(64px,9vw,160px);line-height:1.05;letter-spacing:-.065em;text-align:center;overflow-wrap:normal}
+#works.scroll-works .showcase-heading span{padding:0;text-align:center;color:#fff}
+#works.scroll-works .showcase-number{position:absolute;bottom:24px;left:var(--pad)}
+#works.scroll-works .showcase-open{right:var(--pad);top:90px}
+#works.scroll-works .scroll-showcase-end{justify-content:flex-end}
+#works.scroll-works .scroll-showcase-end .showcase-progress{display:none}
+@media(max-width:800px){#works.scroll-works .showcase-heading h3{font-size:clamp(42px,12vw,95px)}#works.scroll-works .showcase-heading{width:96%}}
