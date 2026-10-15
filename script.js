@@ -48,10 +48,59 @@
   const pageDescription = document.querySelector('meta[name="description"]');
   const spanishDescription = pageDescription.content;
   let language = 'es';
+  // Rebuild line masks after translation and responsive line wrapping.
+  const aboutParagraphs = Array.from(document.querySelectorAll('#about .about-copy > p'));
+  let aboutRevealed = false;
+  const rebuildAboutLines = () => {
+    if (!aboutParagraphs.length) return;
+    aboutParagraphs.forEach((paragraph, paragraphIndex) => {
+      const sentence = paragraph.textContent.trim();
+      if (!sentence) return;
+      paragraph.classList.remove('about-mask-ready');
+      paragraph.textContent = '';
+      // Measure natural word wraps with the actual live paragraph width and font.
+      const words = sentence.split(/\s+/);
+      const probes = words.map((word, i) => {
+        const node = document.createElement('span');
+        node.className = 'about-measure-word';
+        node.textContent = word + (i < words.length - 1 ? ' ' : '');
+        paragraph.appendChild(node);
+        return node;
+      });
+      const groups = [];
+      probes.forEach(node => {
+        const y = Math.round(node.offsetTop);
+        const latest = groups[groups.length - 1];
+        if (!latest || Math.abs(latest.y - y) > 3) groups.push({ y, words: [node.textContent] });
+        else latest.words.push(node.textContent);
+      });
+      const lines = groups.map(group => group.words.join('').trim());
+      paragraph.replaceChildren();
+      lines.forEach((line, lineIndex) => {
+        const mask = document.createElement('span');
+        mask.className = 'about-line-mask';
+        const content = document.createElement('span');
+        content.className = 'about-line-content';
+        content.textContent = line;
+        content.style.setProperty('--line-delay', (paragraphIndex * .24 + lineIndex * .105).toFixed(3) + 's');
+        mask.appendChild(content);
+        paragraph.appendChild(mask);
+      });
+      paragraph.setAttribute('aria-label', sentence);
+      paragraph.classList.add('about-mask-ready');
+    });
+    if (aboutRevealed) document.querySelector('#about .about-grid')?.classList.add('about-animated-in');
+  };
+  let aboutResizeTick;
+  window.addEventListener('resize', () => {
+    clearTimeout(aboutResizeTick);
+    aboutResizeTick = setTimeout(rebuildAboutLines, 180);
+  }, { passive: true });
   const setLanguage = (next, updateURL = true) => {
     language = next === 'en' ? 'en' : 'es';
     document.documentElement.lang = language;
     translations.forEach(item => { item.el.textContent = item[language]; });
+    rebuildAboutLines();
     accessibleLabels.forEach(item => { item.el.setAttribute('aria-label', item[language]); });
     document.querySelectorAll('[data-language]').forEach(el => { el.hidden = el.dataset.language !== language; });
     languageButtons.forEach(button => {
@@ -77,6 +126,23 @@
   }
   languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(language === 'es' ? 'en' : 'es')));
   setLanguage(initialLanguage, false);
+
+  // Start only when the About content enters the viewport; do not animate on reduced motion.
+  const aboutGrid = document.querySelector('#about .about-grid');
+  if (aboutGrid && aboutParagraphs.length && !reducedMotion.matches && 'IntersectionObserver' in window) {
+    aboutGrid.classList.add('about-motion-enabled');
+    const aboutObserver = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        aboutRevealed = true;
+        aboutGrid.classList.add('about-animated-in');
+        aboutObserver.disconnect();
+      }
+    }, { rootMargin: '0px 0px -9% 0px', threshold: .12 });
+    aboutObserver.observe(aboutGrid);
+  } else {
+    aboutRevealed = true;
+    aboutGrid?.classList.add('about-animated-in');
+  }
 
   // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
   // Without dialog support or JavaScript the project articles remain readable on the page.
