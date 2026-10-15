@@ -90,6 +90,7 @@
       paragraph.classList.add('about-mask-ready');
     });
     if (aboutRevealed) document.querySelector('#about .about-grid')?.classList.add('about-animated-in');
+    window.dispatchEvent(new Event('scroll'));
   };
   let aboutResizeTick;
   window.addEventListener('resize', () => {
@@ -127,24 +128,63 @@
   languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(language === 'es' ? 'en' : 'es')));
   setLanguage(initialLanguage, false);
 
-  // Start only when the About content enters the viewport; do not animate on reduced motion.
+  // About: line-by-line reveal tied continuously to scroll position, not a fast timer.
   const aboutGrid = document.querySelector('#about .about-grid');
-  if (aboutGrid && aboutParagraphs.length && !reducedMotion.matches && 'IntersectionObserver' in window) {
+  if (aboutGrid && aboutParagraphs.length && !reducedMotion.matches) {
     aboutGrid.classList.add('about-motion-enabled');
-    const aboutObserver = new IntersectionObserver(entries => {
-      if (entries.some(entry => entry.isIntersecting)) {
-        aboutRevealed = true;
-        aboutGrid.classList.add('about-animated-in');
-        aboutObserver.disconnect();
+    let aboutFrame = 0;
+    const clampAbout = value => Math.max(0, Math.min(1, value));
+    const renderAboutScroll = () => {
+      aboutFrame = 0;
+      const rect = aboutGrid.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      // Start only when the paragraph area reaches the lower-middle of the screen.
+      // Complete when the area has moved toward the upper part of the screen.
+      const start = viewport * .57;
+      const end = viewport * .08;
+      const progress = clampAbout((start - rect.top) / (start - end));
+      const groups = aboutParagraphs.map(p => [...p.querySelectorAll('.about-line-content')]);
+      const firstCount = groups[0]?.length || 1;
+      const secondCount = groups[1]?.length || 1;
+      groups.forEach((lines, groupIndex) => {
+        const from = groupIndex === 0 ? 0 : .48;
+        const to = groupIndex === 0 ? .62 : 1;
+        const local = clampAbout((progress - from) / (to - from));
+        lines.forEach((line, i) => {
+          // Each successive line occupies its own portion of the scroll distance.
+          const lineProgress = clampAbout(local * (lines.length + .65) - i);
+          const eased = 1 - Math.pow(1 - lineProgress, 2);
+          line.style.transition = 'none';
+          line.style.opacity = String(eased);
+          line.style.transform = 'translate3d(0,' + ((1 - eased) * 105).toFixed(2) + '%,0)';
+        });
+      });
+      const photo = aboutGrid.querySelector('.about-photo img');
+      if (photo) {
+        const photoProgress = clampAbout((progress - .19) / .46);
+        const eased = 1 - Math.pow(1 - photoProgress, 2);
+        photo.style.transition = 'none';
+        photo.style.opacity = String(eased);
+        photo.style.transform = 'translate3d(0,' + ((1 - eased) * 28).toFixed(2) + 'px,0)';
       }
-    }, { rootMargin: '0px 0px -9% 0px', threshold: .12 });
-    aboutObserver.observe(aboutGrid);
+    };
+    const requestAbout = () => {
+      if (!aboutFrame) aboutFrame = requestAnimationFrame(renderAboutScroll);
+    };
+    window.addEventListener('scroll', requestAbout, { passive: true });
+    window.addEventListener('resize', requestAbout, { passive: true });
+    window.addEventListener('pageshow', requestAbout);
+    requestAbout();
+    // Line splitting changes after font load or language/viewport changes.
+    document.fonts?.ready.then(requestAbout);
+    window.addEventListener('resize', () => setTimeout(requestAbout, 220), { passive: true });
+    aboutGrid.addEventListener('pointerenter', requestAbout);
   } else {
     aboutRevealed = true;
     aboutGrid?.classList.add('about-animated-in');
   }
 
-  // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
+    // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
   // Without dialog support or JavaScript the project articles remain readable on the page.
   const modal = document.querySelector('#projectModal');
   const archive = document.querySelector('#projectArchive');
