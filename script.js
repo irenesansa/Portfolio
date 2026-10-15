@@ -102,6 +102,12 @@
     document.documentElement.lang = language;
     translations.forEach(item => { item.el.textContent = item[language]; });
     rebuildAboutLines();
+    if (wordRevealStarted) {
+      clearInterval(aboutTimer);
+      wordRevealStarted = false;
+      wordRevealFinished = false;
+      window.setTimeout(playAboutWords, 0);
+    }
     accessibleLabels.forEach(item => { item.el.setAttribute('aria-label', item[language]); });
     document.querySelectorAll('[data-language]').forEach(el => { el.hidden = el.dataset.language !== language; });
     languageButtons.forEach(button => {
@@ -128,57 +134,51 @@
   languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(language === 'es' ? 'en' : 'es')));
   setLanguage(initialLanguage, false);
 
-  // About: line-by-line reveal tied continuously to scroll position, not a fast timer.
+  // Word-by-word reveal: leisurely timed sequence starts when the main text is actually visible.
   const aboutGrid = document.querySelector('#about .about-grid');
-  if (aboutGrid && aboutParagraphs.length && !reducedMotion.matches) {
-    aboutGrid.classList.add('about-motion-enabled');
-    let aboutFrame = 0;
-    const clampAbout = value => Math.max(0, Math.min(1, value));
-    const renderAboutScroll = () => {
-      aboutFrame = 0;
-      const rect = aboutGrid.getBoundingClientRect();
-      const viewport = window.innerHeight;
-      // Start only when the paragraph area reaches the lower-middle of the screen.
-      // Complete when the area has moved toward the upper part of the screen.
-      const start = viewport * .57;
-      const end = viewport * .08;
-      const progress = clampAbout((start - rect.top) / (start - end));
-      const groups = aboutParagraphs.map(p => [...p.querySelectorAll('.about-line-content')]);
-      const firstCount = groups[0]?.length || 1;
-      const secondCount = groups[1]?.length || 1;
-      groups.forEach((lines, groupIndex) => {
-        const from = groupIndex === 0 ? 0 : .48;
-        const to = groupIndex === 0 ? .62 : 1;
-        const local = clampAbout((progress - from) / (to - from));
-        lines.forEach((line, i) => {
-          // Each successive line occupies its own portion of the scroll distance.
-          const lineProgress = clampAbout(local * (lines.length + .65) - i);
-          const eased = 1 - Math.pow(1 - lineProgress, 2);
-          line.style.transition = 'none';
-          line.style.opacity = String(eased);
-          line.style.transform = 'translate3d(0,' + ((1 - eased) * 105).toFixed(2) + '%,0)';
-        });
+  const aboutLead = document.querySelector('#about .about-lead');
+  let aboutTimer = null;
+  let wordRevealStarted = false;
+  let wordRevealFinished = false;
+  const playAboutWords = () => {
+    if (wordRevealStarted || reducedMotion.matches) return;
+    wordRevealStarted = true;
+    aboutGrid?.classList.add('about-motion-enabled');
+    // Every word appears individually. 165 ms spacing creates an editorial, unhurried rhythm.
+    const words = [...document.querySelectorAll('#about .about-line-content')].flatMap(line => {
+      const text = line.textContent.trim();
+      line.replaceChildren();
+      return text.split(/\\s+/).map((word, i, all) => {
+        const span = document.createElement('span');
+        span.className = 'about-word';
+        span.textContent = word + (i < all.length - 1 ? ' ' : '');
+        line.appendChild(span);
+        return span;
       });
-      const photo = aboutGrid.querySelector('.about-photo img');
-      if (photo) {
-        const photoProgress = clampAbout((progress - .19) / .46);
-        const eased = 1 - Math.pow(1 - photoProgress, 2);
-        photo.style.transition = 'none';
-        photo.style.opacity = String(eased);
-        photo.style.transform = 'translate3d(0,' + ((1 - eased) * 28).toFixed(2) + 'px,0)';
+    });
+    const photo = aboutGrid?.querySelector('.about-photo img');
+    if (photo) photo.classList.add('about-photo-pending');
+    let current = 0;
+    const advance = () => {
+      if (current >= words.length) {
+        clearInterval(aboutTimer);
+        wordRevealFinished = true;
+        photo?.classList.add('about-photo-visible');
+        return;
       }
+      words[current].classList.add('about-word-visible');
+      if (current === Math.floor(words.length * .52)) photo?.classList.add('about-photo-visible');
+      current++;
     };
-    const requestAbout = () => {
-      if (!aboutFrame) aboutFrame = requestAnimationFrame(renderAboutScroll);
-    };
-    window.addEventListener('scroll', requestAbout, { passive: true });
-    window.addEventListener('resize', requestAbout, { passive: true });
-    window.addEventListener('pageshow', requestAbout);
-    requestAbout();
-    // Line splitting changes after font load or language/viewport changes.
-    document.fonts?.ready.then(requestAbout);
-    window.addEventListener('resize', () => setTimeout(requestAbout, 220), { passive: true });
-    aboutGrid.addEventListener('pointerenter', requestAbout);
+    advance();
+    aboutTimer = window.setInterval(advance, 165);
+  };
+  if (aboutGrid && aboutLead && !reducedMotion.matches && 'IntersectionObserver' in window) {
+    // Do not start when the heading enters: wait until the actual introduction is clearly visible.
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0]?.isIntersecting) { observer.disconnect(); playAboutWords(); }
+    }, { threshold: .55, rootMargin: '0px 0px -12% 0px' });
+    observer.observe(aboutLead);
   } else {
     aboutRevealed = true;
     aboutGrid?.classList.add('about-animated-in');
