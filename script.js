@@ -136,23 +136,49 @@
     window.addEventListener('blur', () => cursor.classList.remove('active'));
   }
 
-  // Actualizar el contador de proyectos mientras se hace scroll (sin interceptar el scroll).
+  // Scroll-driven pinned showcase: one fixed viewport, changing image and title.
+  const scrollShowcase = document.querySelector('#works .scroll-showcase');
   const scrollSlides = Array.from(document.querySelectorAll('#works .scroll-slide'));
   const scrollProgress = document.querySelector('#works .showcase-progress');
-  if (scrollSlides.length && scrollProgress) {
-    let frame = 0;
-    const syncProgress = () => {
-      frame = 0;
-      const threshold = window.innerHeight * .48;
-      let current = 0;
+  if (scrollShowcase && scrollSlides.length && scrollProgress) {
+    let scheduled = false;
+    let activeSlide = -1;
+    const updateShowcase = () => {
+      scheduled = false;
+      const rect = scrollShowcase.getBoundingClientRect();
+      const travel = Math.max(1, scrollShowcase.offsetHeight - window.innerHeight);
+      const position = Math.min(1, Math.max(0, -rect.top / travel));
+      const positionInSlides = position * (scrollSlides.length - 1);
+      const nearest = Math.min(scrollSlides.length - 1, Math.floor(positionInSlides + 0.5));
+      // Crossfade occupies a short interval around each project boundary.
       scrollSlides.forEach((slide, i) => {
-        if (slide.getBoundingClientRect().top <= threshold) current = i;
+        const proximity = Math.abs(positionInSlides - i);
+        const alpha = Math.min(1, Math.max(0, (0.7 - proximity) / 0.4));
+        const visible = reducedMotion.matches ? i === nearest : alpha > 0.001;
+        const opacity = reducedMotion.matches ? (i === nearest ? 1 : 0) : alpha;
+        slide.style.opacity = String(opacity);
+        slide.style.zIndex = String(i + 1);
+        slide.style.pointerEvents = i === nearest ? 'auto' : 'none';
+        slide.style.visibility = visible ? 'visible' : 'hidden';
+        slide.classList.toggle('is-active', i === nearest);
+        slide.tabIndex = i === nearest ? 0 : -1;
+        slide.setAttribute('aria-hidden', String(i !== nearest));
+        const image = slide.querySelector('img');
+        const overlay = slide.querySelector('.showcase-overlay');
+        if (image) image.style.transform = reducedMotion.matches ? 'none' : 'scale(' + (1.06 - Math.max(0, 1 - proximity) * .06) + ')';
+        if (overlay) overlay.style.transform = reducedMotion.matches ? 'none' : 'translateY(' + Math.min(18, proximity * 18) + 'px)';
       });
-      scrollProgress.textContent = String(current + 1).padStart(2, '0') + ' — ' + String(scrollSlides.length).padStart(2, '0');
+      if (nearest !== activeSlide) {
+        activeSlide = nearest;
+        scrollProgress.textContent = String(nearest + 1).padStart(2, '0') + ' — ' + String(scrollSlides.length).padStart(2, '0');
+      }
     };
-    const requestProgress = () => { if (!frame) frame = requestAnimationFrame(syncProgress); };
-    window.addEventListener('scroll', requestProgress, {passive:true});
-    window.addEventListener('resize', requestProgress, {passive:true});
-    requestProgress();
+    const requestShowcase = () => {
+      if (!scheduled) { scheduled = true; requestAnimationFrame(updateShowcase); }
+    };
+    window.addEventListener('scroll', requestShowcase, {passive: true});
+    window.addEventListener('resize', requestShowcase, {passive: true});
+    reducedMotion.addEventListener('change', requestShowcase);
+    requestShowcase();
   }
 })();
