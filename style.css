@@ -285,3 +285,9 @@ body.intro-playing{overflow:hidden}
 #modalContent .polydor-gallery-bottom figure{height:clamp(275px,30vw,560px)}
 #modalContent .polydor-gallery-bottom figure img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 @media(max-width:700px){#modalContent .polydor-gallery-top,#modalContent .polydor-gallery-bottom{grid-template-columns:1fr}#modalContent .polydor-gallery-top figure,#modalContent .polydor-gallery-bottom figure{height:auto}#modalContent .polydor-gallery-top figure img,#modalContent .polydor-gallery-bottom figure img{height:auto;object-fit:contain}}
+
+/* Minimal project close symbol, without round borders or rounded stroke ends. */
+.modal-toolbar .modal-close{appearance:none;width:44px;height:44px;border:0;border-radius:0;background:transparent;padding:5px;display:grid;place-items:center;line-height:0;transition:opacity .2s ease,transform .2s ease}
+.modal-toolbar .modal-close:hover{opacity:.65;transform:scale(.94)}
+.modal-toolbar .modal-close .close-cross{display:block;width:30px;height:30px}
+.modal-toolbar .modal-close:focus-visible{outline:2px solid currentColor;outline-offset:3px}
