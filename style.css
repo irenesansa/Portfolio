@@ -267,3 +267,11 @@ body.intro-playing{overflow:hidden}
  #modalContent .greeno-gallery-column .greeno-fill-photo{flex:none}
  #modalContent .greeno-gallery-column .greeno-fill-photo img{height:auto;object-fit:contain}
 }
+
+/* Starbucks: balance both gallery columns with the additional urban poster. */
+#modalContent .project-gallery.starbucks-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;columns:auto;align-items:stretch}
+#modalContent .starbucks-gallery-column{display:flex;flex-direction:column;gap:12px;min-width:0}
+#modalContent .starbucks-gallery-column figure,#modalContent .starbucks-gallery-column .gallery-note{margin:0;flex-shrink:0}
+#modalContent .starbucks-gallery-column .starbucks-urban-poster{flex:1 1 0;min-height:0;overflow:hidden}
+#modalContent .starbucks-gallery-column .starbucks-urban-poster img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+@media(max-width:700px){#modalContent .project-gallery.starbucks-gallery{grid-template-columns:1fr}#modalContent .starbucks-gallery-column .starbucks-urban-poster{flex:none}#modalContent .starbucks-gallery-column .starbucks-urban-poster img{height:auto;object-fit:contain}}
