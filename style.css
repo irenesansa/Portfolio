@@ -177,16 +177,23 @@ body.modal-open{overflow:hidden}
 @media(max-width:800px){#works.scroll-works .showcase-heading h3{font-size:clamp(42px,12vw,95px)}#works.scroll-works .showcase-heading{width:96%}}
 
 
-/* Hero inspired by the supplied video: an ongoing, staggered typographic weight play. */
-.hero-title.hero-animated{font-weight:500}
-.hero-title.hero-animated .hero-name-line{display:flex;align-items:baseline;gap:0;white-space:nowrap}
+/* Interactive hero lettering: cursor proximity changes weight and width. */
+.hero-title.hero-animated .hero-name-line{display:flex;align-items:baseline;white-space:nowrap}
 .hero-title.hero-animated .hero-name-line.hero-shift{justify-content:flex-end}
-.hero-title.hero-animated .hero-letter{display:inline-block;flex:none;font-weight:700;letter-spacing:-.065em;animation:hero-type-pulse 6s ease-in-out infinite;animation-delay:calc(var(--letter)*-.61s);will-change:font-weight}
-.hero-title.hero-animated .hero-name-line:nth-child(2) .hero-letter{animation-delay:calc(-2.1s - var(--letter)*.53s)}
-@keyframes hero-type-pulse{
-  0%,12%,82%,100%{font-weight:700}
-  25%,56%{font-weight:400}
-  67%{font-weight:500}
+.hero-title.hero-animated .hero-letter{
+ display:inline-block;flex:none;font-weight:400;letter-spacing:-.065em;
+ animation:none!important;
+ transform-origin:center center;
+ transform:scaleX(var(--stretch,1));
+ transition:transform .32s cubic-bezier(.2,.75,.2,1),font-weight .32s ease;
 }
-@media(max-width:800px){.hero-title.hero-animated{font-size:clamp(56px,13.4vw,125px)}.hero-title.hero-animated .hero-letter{letter-spacing:-.075em}}
-@media(prefers-reduced-motion:reduce){.hero-title.hero-animated .hero-letter{animation:none;font-weight:600}}
+@media (hover:hover) and (pointer:fine){
+ .hero-title.hero-animated .hero-letter:hover{font-weight:800;transform:scaleX(1.22)}
+}
+@media(max-width:800px){
+ .hero-title.hero-animated{font-size:clamp(56px,13.4vw,125px)}
+ .hero-title.hero-animated .hero-letter{letter-spacing:-.075em}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-title.hero-animated .hero-letter{animation:none!important;transition:none!important}
+}
