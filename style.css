@@ -360,3 +360,22 @@ body.intro-playing{overflow:hidden}
  #about.about .about-copy .skills{grid-column:1}
  #about.about .cv-full>h3{font-size:74px}
 }
+
+
+/* About copy layout refinement — reference: introduction top-left, closing paragraph centered below. */
+#about.about .about-grid{padding-top:clamp(65px,8vw,130px)}
+#about.about .about-copy{min-height:clamp(350px,33vw,510px);justify-content:flex-start;gap:0}
+#about.about .about-copy .about-lead{font-size:clamp(31px,3.3vw,55px);max-width:780px;line-height:1.12}
+#about.about .about-copy>p:not(.about-lead){align-self:flex-end;text-align:center;max-width:720px;margin-top:auto;margin-bottom:0;font-size:clamp(22px,2.7vw,42px);line-height:1.16;letter-spacing:-.05em}
+#about.about .about-copy .skills{margin-top:20px}
+@media(max-width:760px){
+ #about.about .about-grid{padding-top:48px}
+ #about.about .about-copy{min-height:clamp(300px,45vw,420px)}
+ #about.about .about-copy .about-lead{font-size:clamp(25px,4.2vw,40px)}
+ #about.about .about-copy>p:not(.about-lead){font-size:clamp(20px,3.2vw,30px)}
+}
+@media(max-width:540px){
+ #about.about .about-copy{min-height:0;gap:34px}
+ #about.about .about-copy .about-lead{font-size:clamp(24px,6vw,34px)}
+ #about.about .about-copy>p:not(.about-lead){font-size:clamp(18px,4vw,25px);margin-top:0;text-align:left}
+}
