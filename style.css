@@ -330,3 +330,33 @@ body.intro-playing{overflow:hidden}
 /* CV accordions: thin square-ended plus/minus icons matching the close X. */
 .cv-details summary::after{content:"";display:block;flex:0 0 30px;width:30px;height:30px;background:linear-gradient(var(--ink),var(--ink)) center/26px 1.35px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.35px 26px no-repeat}
 .cv-details details[open] summary::after{content:"";background:linear-gradient(var(--ink),var(--ink)) center/26px 1.35px no-repeat}
+
+
+/* About layout — wireframe composition. Existing image, text and CV unchanged. */
+#about.about .about-grid{display:grid;grid-template-columns:minmax(0,1fr) clamp(185px,18vw,285px);column-gap:clamp(35px,8vw,145px);align-items:end;padding:clamp(40px,5vw,75px) 0 clamp(30px,4vw,65px)}
+#about.about .about-copy{grid-column:1;grid-row:1;min-height:clamp(330px,31vw,480px);display:flex;flex-direction:column;justify-content:space-between;gap:30px}
+#about.about .about-copy .about-lead{max-width:740px;margin:0;font-size:clamp(32px,3.65vw,61px);line-height:1.08;letter-spacing:-.058em}
+#about.about .about-copy>p:not(.about-lead){font-size:clamp(17px,1.55vw,23px);line-height:1.28;letter-spacing:-.035em;max-width:720px;margin:0}
+#about.about .about-photo{grid-column:2;grid-row:1;width:100%;max-width:285px;align-self:end;justify-self:end}
+#about.about .about-photo img{display:block;width:100%;height:auto;aspect-ratio:auto;object-fit:contain;filter:none}
+#about.about .about-copy .skills{margin-top:0}
+#about.about .cv-full{display:block;border-top:0;padding-top:0}
+#about.about .cv-full>h3{font-size:clamp(75px,8.2vw,132px);line-height:1;letter-spacing:-.08em;margin:0 0 clamp(27px,3.2vw,53px)}
+#about.about .cv-details{width:100%}
+#about.about .cv-details details:first-child{border-top:1px solid var(--line)}
+#about.about .cv-details summary{padding:12px 0;font-size:clamp(23px,2.2vw,36px);line-height:1.12}
+@media(max-width:760px){
+ #about.about .about-grid{grid-template-columns:minmax(0,1fr) clamp(125px,27vw,205px);gap:22px;padding:35px 0 50px}
+ #about.about .about-copy{min-height:0;gap:26px}
+ #about.about .about-copy .about-lead{font-size:clamp(25px,4.8vw,43px)}
+ #about.about .about-copy>p:not(.about-lead){font-size:clamp(15px,2.5vw,19px)}
+ #about.about .cv-full>h3{font-size:clamp(70px,12vw,110px)}
+}
+@media(max-width:540px){
+ #about.about .about-grid{grid-template-columns:minmax(0,1fr) 120px;gap:15px;align-items:end}
+ #about.about .about-copy .about-lead{font-size:clamp(25px,6vw,35px)}
+ #about.about .about-copy>p:not(.about-lead){font-size:15px}
+ #about.about .about-photo{align-self:end}
+ #about.about .about-copy .skills{grid-column:1}
+ #about.about .cv-full>h3{font-size:74px}
+}
