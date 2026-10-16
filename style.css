@@ -422,3 +422,7 @@ body.intro-playing{overflow:hidden}
 
 /* About only: keep individual words invisible until the delayed scroll reveal. */
 #about .about-reveal-pending .about-reveal-word{opacity:0}
+
+/* Editorial captions: reveal one word at a time only as each project is scrolled into view. */
+.project-detail .gallery-note-copy .project-caption-word{display:inline;white-space:pre-wrap}
+.project-detail .gallery-note-copy.project-caption-pending .project-caption-word{opacity:0}
