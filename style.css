@@ -408,3 +408,6 @@ body.intro-playing{overflow:hidden}
  #about.about .about-copy .about-lead,
  #about.about .about-copy>p:not(.about-lead){font-size:clamp(19px,4.5vw,27px)}
 }
+
+/* About second paragraph: align its text to the photo/right edge, keeping size. */
+#about.about .about-copy>p:not(.about-lead){text-align:right;align-self:flex-end}
