@@ -379,3 +379,9 @@ body.intro-playing{overflow:hidden}
  #about.about .about-copy .about-lead{font-size:clamp(24px,6vw,34px)}
  #about.about .about-copy>p:not(.about-lead){font-size:clamp(18px,4vw,25px);margin-top:0;text-align:left}
 }
+
+/* Colour-only individual letter hover; original typography and positions unchanged. */
+.hero-title .hero-hover-line{display:block}
+.hero-title .hero-hover-letter{display:inline;color:inherit;transition:color .18s ease}
+@media(hover:hover) and (pointer:fine){.hero-title .hero-hover-letter:hover{color:#FFF8B8}}
+@media(prefers-reduced-motion:reduce){.hero-title .hero-hover-letter{transition:none}}
