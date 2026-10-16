@@ -52,7 +52,7 @@
     language = next === 'en' ? 'en' : 'es';
     document.documentElement.lang = language;
     translations.forEach(item => { item.el.textContent = item[language]; });
-    if (typeof currentProject !== 'undefined' && currentProject) requestAnimationFrame(() => watchProjectCaption(currentProject));
+
     accessibleLabels.forEach(item => { item.el.setAttribute('aria-label', item[language]); });
     document.querySelectorAll('[data-language]').forEach(el => { el.hidden = el.dataset.language !== language; });
     languageButtons.forEach(button => {
@@ -129,6 +129,9 @@
   const articles = Array.from(archive.querySelectorAll('.project-detail'));
   const supportsDialog = typeof modal.showModal === 'function';
   let currentProject = null;
+  document.querySelectorAll('#langToggle, #modalLang').forEach(button => button.addEventListener('click', () => {
+    if (currentProject) requestAnimationFrame(() => watchProjectCaption(currentProject));
+  }));
   let returnFocus = null;
   const clearProjectHash = () => {
     if (location.hash.startsWith('#project-')) {
