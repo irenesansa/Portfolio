@@ -146,6 +146,40 @@
     routeProject();
   }
 
+  // About: unobtrusive word-by-word scroll reveal. Runs once when paragraphs become visible.
+  // The original paragraph text remains intact until animation starts.
+  if (!reducedMotion.matches && 'IntersectionObserver' in window) {
+    const aboutTexts = [...document.querySelectorAll('#about .about-copy > p')];
+    const aboutObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const paragraph = entry.target;
+        observer.unobserve(paragraph);
+        const original = paragraph.textContent;
+        const fragments = original.match(/\\S+\\s*/g) || [];
+        const nodes = fragments.map(fragment => {
+          const span = document.createElement('span');
+          span.className = 'about-reveal-word';
+          span.textContent = fragment;
+          return span;
+        });
+        paragraph.replaceChildren(...nodes);
+        nodes.forEach((node, index) => {
+          node.animate([
+            {opacity:0,filter:'blur(2px)'},
+            {opacity:1,filter:'blur(0px)'}
+          ], {
+            duration: 650,
+            delay: index * 115,
+            easing:'ease-out',
+            fill:'both'
+          });
+        });
+      });
+    }, {threshold: .18, rootMargin: '0px 0px -16% 0px'});
+    aboutTexts.forEach(text => aboutObserver.observe(text));
+  }
+
   const copy = document.querySelector('#copyEmail');
   copy.hidden = false;
   copy.addEventListener('click', async () => {
