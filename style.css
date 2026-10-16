@@ -416,3 +416,6 @@ body.intro-playing{overflow:hidden}
 @media(min-width:1100px){
  #about.about .about-copy>p:not(.about-lead){max-width:100%;width:min(100%,1080px)}
 }
+
+/* About reveal only: inline words retain original line wrapping and typography. */
+#about .about-reveal-word{display:inline;white-space:pre-wrap}
