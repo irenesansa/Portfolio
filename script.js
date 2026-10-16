@@ -146,38 +146,62 @@
     routeProject();
   }
 
-  // About: unobtrusive word-by-word scroll reveal. Runs once when paragraphs become visible.
-  // The original paragraph text remains intact until animation starts.
+  // Prepare the hidden words BEFORE observing them; reveal only when the user
+  // actually reaches the paragraph area, not when the heading enters view.
   if (!reducedMotion.matches && 'IntersectionObserver' in window) {
     const aboutTexts = [...document.querySelectorAll('#about .about-copy > p')];
-    const aboutObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const paragraph = entry.target;
-        observer.unobserve(paragraph);
-        const original = paragraph.textContent;
-        const fragments = original.match(/\S+\s*/g) || [];
-        const nodes = fragments.map(fragment => {
-          const span = document.createElement('span');
-          span.className = 'about-reveal-word';
-          span.textContent = fragment;
-          return span;
-        });
-        paragraph.replaceChildren(...nodes);
-        nodes.forEach((node, index) => {
-          node.animate([
-            {opacity:0,filter:'blur(2px)'},
-            {opacity:1,filter:'blur(0px)'}
+    const aboutSection = document.querySelector('#about');
+    const prepare = paragraph => {
+      const original = paragraph.textContent;
+      const words = original.match(/\S+\s*/g) || [];
+      const spans = words.map(fragment => {
+        const span = document.createElement('span');
+        span.className = 'about-reveal-word';
+        span.textContent = fragment;
+        return span;
+      });
+      paragraph.replaceChildren(...spans);
+      paragraph.classList.add('about-reveal-pending');
+      return spans;
+    };
+    const prepared = aboutTexts.map(prepare);
+    let played = false;
+    const reveal = () => {
+      if (played) return;
+      played = true;
+      prepared.forEach((words, paragraphIndex) => {
+        words.forEach((word, index) => {
+          word.animate([
+            { opacity: 0, filter: 'blur(2px)' },
+            { opacity: 1, filter: 'blur(0px)' }
           ], {
             duration: 650,
-            delay: index * 115,
-            easing:'ease-out',
-            fill:'both'
+            delay: paragraphIndex * 230 + index * 115,
+            easing: 'ease-out',
+            fill: 'forwards'
           });
         });
       });
-    }, {threshold: .18, rootMargin: '0px 0px -16% 0px'});
-    aboutTexts.forEach(text => aboutObserver.observe(text));
+    };
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      observer.disconnect();
+      reveal();
+    }, { threshold: 0, rootMargin: '-42% 0px -42% 0px' });
+    if (aboutSection) {
+      // Track the actual text region rather than the full About section.
+      const target = aboutTexts[0];
+      observer.observe(target);
+    }
+    // Keep accessibility and translated text usable; translation updates
+    // replace the spans, so don't start a second animation on language change.
+    document.querySelectorAll('#langToggle, #modalLang').forEach(button => button.addEventListener('click', () => {
+      observer.disconnect();
+      prepared.forEach((words, i) => {
+        aboutTexts[i]?.classList.remove('about-reveal-pending');
+      });
+      played = true;
+    }));
   }
 
   const copy = document.querySelector('#copyEmail');
