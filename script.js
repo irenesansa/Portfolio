@@ -78,6 +78,49 @@
   languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(language === 'es' ? 'en' : 'es')));
   setLanguage(initialLanguage, false);
 
+  // Editorial project captions: same word reveal as About, only upon reaching each caption.
+  if (!reducedMotion.matches && 'IntersectionObserver' in window) {
+    const projectCaptions = [...document.querySelectorAll('.project-detail .gallery-note-copy')];
+    const captionObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const caption = entry.target;
+        captionObserver.unobserve(caption);
+        caption.classList.remove('project-caption-pending');
+        caption.querySelectorAll('.project-caption-word').forEach((word, index) => {
+          word.animate([
+            {opacity:0,filter:'blur(2px)'},
+            {opacity:1,filter:'blur(0px)'}
+          ], {
+            duration:650,
+            delay:index * 115,
+            easing:'ease-out',
+            fill:'forwards'
+          });
+        });
+      });
+    }, {threshold:0, rootMargin:'-42% 0px -42% 0px'});
+    const prepareCaption = caption => {
+      captionObserver.unobserve(caption);
+      const original = caption.textContent;
+      const fragments = original.match(/\S+\s*/g) || [];
+      const words = fragments.map(fragment => {
+        const span = document.createElement('span');
+        span.className = 'project-caption-word';
+        span.textContent = fragment;
+        return span;
+      });
+      caption.replaceChildren(...words);
+      caption.classList.add('project-caption-pending');
+      captionObserver.observe(caption);
+    };
+    projectCaptions.forEach(prepareCaption);
+    // Translation replaces the caption's child nodes; prepare the new language too.
+    document.querySelectorAll('#langToggle, #modalLang').forEach(button => {
+      button.addEventListener('click', () => projectCaptions.forEach(prepareCaption));
+    });
+  }
+
   // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
   // Without dialog support or JavaScript the project articles remain readable on the page.
   const modal = document.querySelector('#projectModal');
