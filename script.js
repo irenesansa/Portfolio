@@ -156,7 +156,7 @@
         const paragraph = entry.target;
         observer.unobserve(paragraph);
         const original = paragraph.textContent;
-        const fragments = original.match(/\\S+\\s*/g) || [];
+        const fragments = original.match(/\S+\s*/g) || [];
         const nodes = fragments.map(fragment => {
           const span = document.createElement('span');
           span.className = 'about-reveal-word';
