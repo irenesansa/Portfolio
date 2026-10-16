@@ -79,48 +79,6 @@
   languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(language === 'es' ? 'en' : 'es')));
   setLanguage(initialLanguage, false);
 
-  // Project captions: prepare when the project opens, observe within the dialog.
-  // This avoids animations firing while the archived articles are hidden.
-  const captionTimers = new WeakMap();
-  let projectCaptionObserver = null;
-  const resetProjectCaption = caption => {
-    projectCaptionObserver?.unobserve(caption);
-    caption.querySelectorAll('.project-caption-word').forEach(word => word.getAnimations().forEach(animation => animation.cancel()));
-    const original = caption.textContent;
-    const parts = original.match(/\S+\s*/g) || [];
-    caption.replaceChildren(...parts.map(part => {
-      const span = document.createElement('span');
-      span.className = 'project-caption-word';
-      span.textContent = part;
-      return span;
-    }));
-    caption.classList.add('project-caption-pending');
-  };
-  const watchProjectCaption = project => {
-    if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
-    projectCaptionObserver?.disconnect();
-    const caption = project.querySelector('.gallery-note-copy');
-    if (!caption) return;
-    resetProjectCaption(caption);
-    projectCaptionObserver = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting)) return;
-      projectCaptionObserver.disconnect();
-      const words = [...caption.querySelectorAll('.project-caption-word')];
-      words.forEach((word,index) => {
-        const animation = word.animate([
-          {opacity:0,filter:'blur(2px)'},
-          {opacity:1,filter:'blur(0px)'}
-        ], {duration:650,delay:index*115,easing:'ease-out',fill:'forwards'});
-        animation.onfinish = () => {
-          word.style.opacity = '1';
-          animation.cancel();
-        };
-      });
-      caption.classList.remove('project-caption-pending');
-    }, {root:document.querySelector('#projectModal'),threshold:0,rootMargin:'-35% 0px -35% 0px'});
-    projectCaptionObserver.observe(caption);
-  };
-
   // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
   // Without dialog support or JavaScript the project articles remain readable on the page.
   const modal = document.querySelector('#projectModal');
@@ -129,9 +87,6 @@
   const articles = Array.from(archive.querySelectorAll('.project-detail'));
   const supportsDialog = typeof modal.showModal === 'function';
   let currentProject = null;
-  document.querySelectorAll('#langToggle, #modalLang').forEach(button => button.addEventListener('click', () => {
-    if (currentProject) requestAnimationFrame(() => watchProjectCaption(currentProject));
-  }));
   let returnFocus = null;
   const clearProjectHash = () => {
     if (location.hash.startsWith('#project-')) {
@@ -139,7 +94,6 @@
     }
   };
   const restoreArticle = () => {
-    projectCaptionObserver?.disconnect();
     if (currentProject) {
       currentProject.hidden = true;
       archive.appendChild(currentProject);
@@ -165,7 +119,6 @@
     document.body.classList.add('modal-open');
     if (!modal.open) modal.showModal();
     modal.scrollTop = 0;
-    watchProjectCaption(project);
     document.querySelector('#modalClose').focus({ preventScroll: true });
   };
   if (supportsDialog) {
