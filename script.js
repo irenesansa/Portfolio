@@ -128,7 +128,14 @@
     });
     document.querySelector('#modalClose').addEventListener('click', closeProject);
     modal.addEventListener('click', event => {
-      if (event.target.closest('.back-projects')) { event.preventDefault(); closeProject(); }
+      const nextLink = event.target.closest('.back-projects');
+      if (nextLink) {
+        event.preventDefault();
+        if (nextLink.hash.startsWith('#project-')) {
+          if (location.hash === nextLink.hash) routeProject();
+          else location.hash = nextLink.hash;
+        } else closeProject();
+      }
     });
     window.addEventListener('hashchange', routeProject);
     document.querySelectorAll('[data-project]').forEach(link => link.addEventListener('click', event => {
