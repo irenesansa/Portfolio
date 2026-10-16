@@ -52,6 +52,7 @@
     language = next === 'en' ? 'en' : 'es';
     document.documentElement.lang = language;
     translations.forEach(item => { item.el.textContent = item[language]; });
+    if (typeof currentProject !== 'undefined' && currentProject) requestAnimationFrame(() => watchProjectCaption(currentProject));
     accessibleLabels.forEach(item => { item.el.setAttribute('aria-label', item[language]); });
     document.querySelectorAll('[data-language]').forEach(el => { el.hidden = el.dataset.language !== language; });
     languageButtons.forEach(button => {
@@ -78,48 +79,47 @@
   languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(language === 'es' ? 'en' : 'es')));
   setLanguage(initialLanguage, false);
 
-  // Editorial project captions: same word reveal as About, only upon reaching each caption.
-  if (!reducedMotion.matches && 'IntersectionObserver' in window) {
-    const projectCaptions = [...document.querySelectorAll('.project-detail .gallery-note-copy')];
-    const captionObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const caption = entry.target;
-        captionObserver.unobserve(caption);
-        caption.classList.remove('project-caption-pending');
-        caption.querySelectorAll('.project-caption-word').forEach((word, index) => {
-          word.animate([
-            {opacity:0,filter:'blur(2px)'},
-            {opacity:1,filter:'blur(0px)'}
-          ], {
-            duration:650,
-            delay:index * 115,
-            easing:'ease-out',
-            fill:'forwards'
-          });
-        });
+  // Project captions: prepare when the project opens, observe within the dialog.
+  // This avoids animations firing while the archived articles are hidden.
+  const captionTimers = new WeakMap();
+  let projectCaptionObserver = null;
+  const resetProjectCaption = caption => {
+    projectCaptionObserver?.unobserve(caption);
+    caption.querySelectorAll('.project-caption-word').forEach(word => word.getAnimations().forEach(animation => animation.cancel()));
+    const original = caption.textContent;
+    const parts = original.match(/\S+\s*/g) || [];
+    caption.replaceChildren(...parts.map(part => {
+      const span = document.createElement('span');
+      span.className = 'project-caption-word';
+      span.textContent = part;
+      return span;
+    }));
+    caption.classList.add('project-caption-pending');
+  };
+  const watchProjectCaption = project => {
+    if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    projectCaptionObserver?.disconnect();
+    const caption = project.querySelector('.gallery-note-copy');
+    if (!caption) return;
+    resetProjectCaption(caption);
+    projectCaptionObserver = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      projectCaptionObserver.disconnect();
+      const words = [...caption.querySelectorAll('.project-caption-word')];
+      words.forEach((word,index) => {
+        const animation = word.animate([
+          {opacity:0,filter:'blur(2px)'},
+          {opacity:1,filter:'blur(0px)'}
+        ], {duration:650,delay:index*115,easing:'ease-out',fill:'forwards'});
+        animation.onfinish = () => {
+          word.style.opacity = '1';
+          animation.cancel();
+        };
       });
-    }, {threshold:0, rootMargin:'-42% 0px -42% 0px'});
-    const prepareCaption = caption => {
-      captionObserver.unobserve(caption);
-      const original = caption.textContent;
-      const fragments = original.match(/\S+\s*/g) || [];
-      const words = fragments.map(fragment => {
-        const span = document.createElement('span');
-        span.className = 'project-caption-word';
-        span.textContent = fragment;
-        return span;
-      });
-      caption.replaceChildren(...words);
-      caption.classList.add('project-caption-pending');
-      captionObserver.observe(caption);
-    };
-    projectCaptions.forEach(prepareCaption);
-    // Translation replaces the caption's child nodes; prepare the new language too.
-    document.querySelectorAll('#langToggle, #modalLang').forEach(button => {
-      button.addEventListener('click', () => projectCaptions.forEach(prepareCaption));
-    });
-  }
+      caption.classList.remove('project-caption-pending');
+    }, {root:document.querySelector('#projectModal'),threshold:0,rootMargin:'-35% 0px -35% 0px'});
+    projectCaptionObserver.observe(caption);
+  };
 
   // Native dialog: Escape, focus trapping and keyboard navigation are handled by the browser.
   // Without dialog support or JavaScript the project articles remain readable on the page.
@@ -136,6 +136,7 @@
     }
   };
   const restoreArticle = () => {
+    projectCaptionObserver?.disconnect();
     if (currentProject) {
       currentProject.hidden = true;
       archive.appendChild(currentProject);
@@ -161,6 +162,7 @@
     document.body.classList.add('modal-open');
     if (!modal.open) modal.showModal();
     modal.scrollTop = 0;
+    watchProjectCaption(project);
     document.querySelector('#modalClose').focus({ preventScroll: true });
   };
   if (supportsDialog) {
