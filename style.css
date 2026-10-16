@@ -385,3 +385,9 @@ body.intro-playing{overflow:hidden}
 .hero-title .hero-hover-letter{display:inline;color:inherit;transition:color .18s ease}
 @media(hover:hover) and (pointer:fine){.hero-title .hero-hover-letter:hover{color:#E7AFDF}}
 @media(prefers-reduced-motion:reduce){.hero-title .hero-hover-letter{transition:none}}
+
+/* Hover rosa por panel del CV; sin modificar estructura ni tamaños. */
+@media (hover:hover) and (pointer:fine){
+ #about .cv-details summary{transition:background-color .22s ease}
+ #about .cv-details summary:hover{background-color:#E7AFDF}
+}
