@@ -419,3 +419,6 @@ body.intro-playing{overflow:hidden}
 
 /* About reveal only: inline words retain original line wrapping and typography. */
 #about .about-reveal-word{display:inline;white-space:pre-wrap}
+
+/* About only: keep individual words invisible until the delayed scroll reveal. */
+#about .about-reveal-pending .about-reveal-word{opacity:0}
