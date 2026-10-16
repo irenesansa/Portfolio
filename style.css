@@ -391,3 +391,8 @@ body.intro-playing{overflow:hidden}
  #about .cv-details summary{transition:background-color .22s ease}
  #about .cv-details summary:hover{background-color:#E7AFDF}
 }
+
+/* Equal-size About paragraphs; preserve existing alignment and layout. */
+#about.about .about-copy .about-lead{font-size:clamp(22px,2.7vw,42px);line-height:1.16;letter-spacing:-.05em}
+@media(max-width:760px){#about.about .about-copy .about-lead{font-size:clamp(20px,3.2vw,30px)}}
+@media(max-width:540px){#about.about .about-copy .about-lead{font-size:clamp(18px,4vw,25px)}}
