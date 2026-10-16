@@ -298,7 +298,7 @@ body.intro-playing{overflow:hidden}
 #contact.home-contact .home-contact-index{font-size:12px;letter-spacing:.08em;color:var(--muted);margin-bottom:auto}
 #contact.home-contact .home-contact-intro{display:flex;align-items:center;justify-content:space-between;gap:28px;padding-top:95px;padding-bottom:28px;border-bottom:1px solid var(--line)}
 #contact.home-contact .home-contact-intro p{font-size:clamp(30px,4.15vw,72px);line-height:1.06;letter-spacing:-.065em;font-weight:500;max-width:1100px;margin:0}
-#contact.home-contact .home-contact-arrow{width:clamp(82px,9.5vw,155px);height:clamp(82px,9.5vw,155px);border:1px solid var(--ink);border-radius:50%;background:#fff8b8;color:var(--ink);display:grid;place-items:center;flex-shrink:0;transition:transform .25s}
+#contact.home-contact .home-contact-arrow{width:clamp(82px,9.5vw,155px);height:clamp(82px,9.5vw,155px);border:1px solid var(--ink);border-radius:50%;background:#E7AFDF;color:var(--ink);display:grid;place-items:center;flex-shrink:0;transition:transform .25s}
 #contact.home-contact .home-contact-arrow:hover{transform:translateY(-5px)}
 #contact.home-contact .home-contact-arrow svg{height:55%;width:55%}
 #contact.home-contact .home-contact-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.65fr);gap:clamp(20px,4vw,72px);align-items:end;padding:clamp(54px,6vw,105px) 0}
