@@ -426,20 +426,18 @@ body.intro-playing{overflow:hidden}
 
 
 
-/* MATERIA only — six supplied mockups in the requested editorial sequence. */
+/* MATERIA: exactly the same two-column gallery structure as STARBUCKS. */
 #works.scroll-works .scroll-showcase{height:500svh}
-#modalContent .project-gallery.materia-gallery{display:flex;flex-direction:column;columns:auto;gap:12px;padding:0 var(--pad)}
-#modalContent .materia-gallery figure,#modalContent .materia-gallery .gallery-note{margin:0;min-width:0;overflow:hidden}
-#modalContent .materia-gallery figure img{display:block;width:100%;height:100%;object-fit:cover}
-#modalContent .materia-gallery .materia-top,#modalContent .materia-gallery .materia-middle,#modalContent .materia-gallery .materia-bottom{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
-#modalContent .materia-gallery .materia-top{min-height:clamp(360px,48vw,790px)}
-#modalContent .materia-gallery .materia-top .gallery-note{min-height:0}
-#modalContent .materia-gallery .materia-portada{height:clamp(290px,45vw,760px)}
-#modalContent .materia-gallery .materia-middle{min-height:clamp(440px,56vw,880px)}
-#modalContent .materia-gallery .materia-bottom{min-height:clamp(440px,55vw,850px)}
+#modalContent .project-gallery.materia-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;columns:auto;align-items:stretch}
+#modalContent .materia-gallery-column{display:flex;flex-direction:column;gap:12px;min-width:0}
+#modalContent .materia-gallery-column figure,#modalContent .materia-gallery-column .gallery-note{margin:0;flex-shrink:0;min-width:0}
+#modalContent .materia-gallery-column figure img{display:block;width:100%;height:auto;object-fit:contain}
+#modalContent .materia-gallery-column .gallery-note{min-height:clamp(230px,29vw,450px);padding:clamp(22px,3vw,45px);background:#e7e3d8}
+#modalContent .materia-gallery-column .materia-fotos-dos{flex:1 1 0;min-height:0;overflow:hidden}
+#modalContent .materia-gallery-column .materia-fotos-dos img{height:100%;object-fit:cover;object-position:center}
 @media(max-width:700px){
- #modalContent .materia-gallery .materia-top,#modalContent .materia-gallery .materia-middle,#modalContent .materia-gallery .materia-bottom{grid-template-columns:1fr;min-height:0}
- #modalContent .materia-gallery .materia-top .gallery-note{min-height:290px}
- #modalContent .materia-gallery figure,#modalContent .materia-gallery .materia-portada{height:auto}
- #modalContent .materia-gallery figure img{height:auto;object-fit:contain}
+ #modalContent .project-gallery.materia-gallery{grid-template-columns:1fr}
+ #modalContent .materia-gallery-column .materia-fotos-dos{flex:none}
+ #modalContent .materia-gallery-column .materia-fotos-dos img{height:auto;object-fit:contain}
+ #modalContent .materia-gallery-column .gallery-note{min-height:260px;padding:25px}
 }
