@@ -441,3 +441,9 @@ body.intro-playing{overflow:hidden}
  #modalContent .materia-gallery-column .materia-fotos-dos img{height:auto;object-fit:contain}
  #modalContent .materia-gallery-column .gallery-note{min-height:260px;padding:25px}
 }
+
+
+/* Hide the system pointer only where the custom dot cursor is supported. */
+@media (pointer:fine) and (hover:hover) and (prefers-reduced-motion:no-preference){
+ html, body, body *, body *::before, body *::after{cursor:none!important}
+}
